@@ -9,7 +9,9 @@ class AuthorController extends Controller
 {
     public function readAll()
     {
-        return response()->json(Author::all());
+        $authors = Author::orderBy('last_name', 'asc')
+            ->get();
+        return response()->json($authors);
     }
 
     public function readOne($id)
@@ -19,17 +21,23 @@ class AuthorController extends Controller
 
     public function create(Request $request)
     {
-        $book = Author::create($request->all());
+        $this->validate($request, [
+            'first_name' => 'required|max:255',
+            'last_name' => 'required|max:255',
+            'pen_name' => 'nullable|max:255',
+        ]);
 
-        return response()->json($book, 201);
+        $author = Author::create($request->all());
+
+        return response()->json($author, 201);
     }
 
     public function update($id, Request $request)
     {
-        $book = Author::findOrFail($id);
-        $book->update($request->all());
+        $author = Author::findOrFail($id);
+        $author->update($request->all());
 
-        return response()->json($book, 200);
+        return response()->json($author, 200);
     }
 
     public function delete($id, Request $request)

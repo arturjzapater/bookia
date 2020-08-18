@@ -7,21 +7,44 @@ use Illuminate\Http\Request;
 
 class BookController extends Controller
 {
+    private function addAuthorInfo($book)
+    {
+        $book->author = $book->author()
+            ->select('id', 'first_name', 'last_name', 'pen_name')
+            ->first();
+        $book->author->url = '/api/authors/' . $book->author->id;
+        return $book;
+    }
+
     public function readAll()
     {
-        return response()->json(Book::all());
+        $books = Book::orderBy('title', 'asc')
+            ->get()
+            ->map(function ($book) {
+                return $this->addAuthorInfo($book);
+            });
+        return response()->json($books);
     }
 
     public function readOne($id)
     {
-        return response()->json(Book::find($id));
+        $book = Book::find($id);
+        $result = $this->addAuthorInfo($book);
+        return response()->json($result);
     }
 
     public function create(Request $request)
     {
-        $book = Book::create($request->all());
+        $this->validate($request, [
+            'title' => 'required|max:255',
+            'year' => 'required',
+            'author_id' => 'required',
+        ]);
 
-        return response()->json($book, 201);
+        $book = Book::create($request->all());
+        $result = $this->addAuthorInfo($book);
+
+        return response()->json($result, 201);
     }
 
     public function update($id, Request $request)
