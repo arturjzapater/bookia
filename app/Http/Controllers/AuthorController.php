@@ -65,6 +65,6 @@ class AuthorController extends Controller
     public function delete($id, Request $request)
     {
         Author::findOrFail($id)->delete();
-        return response('Deleted successfully', 200);
+        return response()->json([ 'message' => 'Deleted succesfully' ], 200);
     }
 }

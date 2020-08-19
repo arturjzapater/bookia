@@ -15,18 +15,41 @@ $router->get('/', function () use ($router) {
     return $router->app->version();
 });
 
-$router->group([ 'prefix' => 'api/authors' ], function () use ($router) {
-    $router->get('/', [ 'uses' => 'AuthorController@readAll' ]);
-    $router->get('/{id}', [ 'uses' => 'AuthorController@readOne' ]);
-    $router->post('/', [ 'uses' => 'AuthorController@create' ]);
-    $router->put('/{id}', [ 'uses' => 'AuthorController@update' ]);
-    $router->delete('/{id}', [ 'uses' => 'AuthorController@delete' ]);
-});
+$router->group([ 
+    'prefix' => 'api',
+    'middleware' => 'auth',
+], function () use ($router) {
+    $router->group([ 'prefix' => 'authors' ], function () use ($router) {
+        $router->get('/', [ 'uses' => 'AuthorController@readAll' ]);
+        $router->get('/{id}', [ 'uses' => 'AuthorController@readOne' ]);
+        $router->post('/', [ 
+            'middleware' => 'auth:create',
+            'uses' => 'AuthorController@create',
+        ]);
+        $router->put('/{id}', [ 
+            'middleware' => 'auth:create',
+            'uses' => 'AuthorController@update',
+        ]);
+        $router->delete('/{id}', [
+            'middleware' => 'auth:delete',
+            'uses' => 'AuthorController@delete',
+        ]);
+    });
 
-$router->group([ 'prefix' => 'api/books' ], function () use ($router) {
-    $router->get('/', [ 'uses' => 'BookController@readAll' ]);
-    $router->get('/{id}', [ 'uses' => 'BookController@readOne' ]);
-    $router->post('/', [ 'uses' => 'BookController@create' ]);
-    $router->put('/{id}', [ 'uses' => 'BookController@update' ]);
-    $router->delete('/{id}', [ 'uses' => 'BookController@delete' ]);
+    $router->group([ 'prefix' => 'books' ], function () use ($router) {
+        $router->get('/', [ 'uses' => 'BookController@readAll' ]);
+        $router->get('/{id}', [ 'uses' => 'BookController@readOne' ]);
+        $router->post('/', [
+            'middleware' => 'auth:create',
+            'uses' => 'BookController@create',
+        ]);
+        $router->put('/{id}', [
+            'middleware' => 'auth:create',
+            'uses' => 'BookController@update',
+        ]);
+        $router->delete('/{id}', [
+            'middleware' => 'auth:delete',
+            'uses' => 'BookController@delete',
+        ]);
+    });
 });

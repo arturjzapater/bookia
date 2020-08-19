@@ -66,6 +66,6 @@ class BookController extends Controller
     public function delete($id, Request $request)
     {
         Book::findOrFail($id)->delete();
-        return response('Deleted successfully', 200);
+        return response()->json([ 'message' => 'Deleted succesfully' ], 200);
     }
 }
