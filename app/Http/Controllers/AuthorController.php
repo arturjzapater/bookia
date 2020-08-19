@@ -50,6 +50,12 @@ class AuthorController extends Controller
 
     public function update($id, Request $request)
     {
+        $this->validate($request, [
+            'first_name' => 'nullable|max:255',
+            'last_name' => 'nullable|max:255',
+            'pen_name' => 'nullable|max:255',
+        ]);
+
         $author = Author::findOrFail($id);
         $author->update($request->all());
 

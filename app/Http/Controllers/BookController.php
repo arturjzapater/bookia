@@ -38,9 +38,8 @@ class BookController extends Controller
         $this->validate($request, [
             'title' => 'required|max:255',
             'date_published' => 'required|date',
-            'author_id' => 'required',
+            'author_id' => 'required|integer',
         ]);
-
 
         $book = Book::create($request->all());
         $result = $this->addAuthorInfo($book);
@@ -52,6 +51,12 @@ class BookController extends Controller
 
     public function update($id, Request $request)
     {
+        $this->validate($request, [
+            'title' => 'nullable|max:255',
+            'date_published' => 'nullable|date',
+            'author_id' => 'nullable|integer'
+        ]);
+
         $book = Book::findOrFail($id);
         $book->update($request->all());
 
