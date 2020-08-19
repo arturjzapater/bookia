@@ -37,14 +37,17 @@ class BookController extends Controller
     {
         $this->validate($request, [
             'title' => 'required|max:255',
-            'year' => 'required',
+            'date_published' => 'required|date',
             'author_id' => 'required',
         ]);
+
 
         $book = Book::create($request->all());
         $result = $this->addAuthorInfo($book);
 
-        return response()->json($result, 201);
+        return response()
+            ->json($result, 201)
+            ->header('Location', '/api/books/' . $result->id);
     }
 
     public function update($id, Request $request)
