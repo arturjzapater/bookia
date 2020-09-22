@@ -12,6 +12,13 @@ cd bookia
 compose install
 ```
 
+Create a copy of the [`.env.example`](.env.example) file, rename it as `.env` and generate a new key
+
+```bash
+cp -a .env.example .env
+php artisan key:generate
+```
+
 Configure your database environment. You will need to update the following environment variables to match your MySQL settings:
 - `DB_DATABASE`
 - `DB_USERNAME`
